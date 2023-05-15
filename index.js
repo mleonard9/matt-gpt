@@ -19,15 +19,20 @@ const port = 3080;
 
 app.post('/', async (req, res) => {
   const { chatLog } = req.body;
-  const response = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
-    messages: chatLog,
-    max_tokens: 100,
-  });
 
-  res.json({
-    message: response.data.choices[0].message,
-  })
+  try {
+    const response = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: chatLog,
+      max_tokens: 100,
+    });
+  
+    res.json({
+      message: response.data.choices[0].message,
+    })
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 app.listen(port, () => {

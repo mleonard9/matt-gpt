@@ -1,7 +1,10 @@
 import './App.css';
 import './normal.css';
 import { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import {
+  IconRobot,
+  IconUser,
+} from '@tabler/icons-react';
 
 function App() {
   const [input, setInput] = useState("");
@@ -18,9 +21,9 @@ function App() {
     setChatLog(chatLogNew);
     setInput("");
 
-    //const messages = chatLogNew.map((message) => message.message).join("\n");
-
-    const response = await fetch('http://localhost:3080/', {
+    try {
+      console.log("fetching...")
+      const response = await fetch('http://localhost:3080/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,6 +34,9 @@ function App() {
     });
     const data = await response.json();
     setChatLog([...chatLogNew, { role: "assistant", content: `${data.message.content}`}]);
+    } catch (e) {
+      console.log(e);
+    }
   } 
 
   return (
@@ -66,8 +72,12 @@ const ChatMessage = ({ message }) => {
   return (
     <div className={`chat-message ${message.role === "assistant" && "chatgpt"}`}>
         <div className="chat-message-center">
-          <div className={`avatar ${message.role === "assistant" && "chatgpt"}`}>
-                
+          <div className="avatar">
+          {message.role === 'assistant' ? (
+            <IconRobot size={30} />
+          ) : (
+            <IconUser size={30} />
+          )}
           </div>
           <div className="message">
               {message.content}
