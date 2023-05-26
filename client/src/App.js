@@ -1,10 +1,7 @@
 import './App.css';
 import './normal.css';
 import { useState } from 'react';
-import {
-  IconRobot,
-  IconUser,
-} from '@tabler/icons-react';
+import ChatMessage from './components/Chat/ChatMessage';
 
 function App() {
   const [input, setInput] = useState("");
@@ -22,7 +19,6 @@ function App() {
     setInput("");
 
     try {
-      console.log("fetching...")
       const response = await fetch('http://localhost:3080/', {
       method: 'POST',
       headers: {
@@ -34,6 +30,7 @@ function App() {
     });
     const data = await response.json();
     setChatLog([...chatLogNew, { role: "assistant", content: `${data.message.content}`}]);
+    console.log(data.message.content)
     } catch (e) {
       console.log(e);
     }
@@ -67,23 +64,5 @@ function App() {
     </div>
   );
 }
-
-const ChatMessage = ({ message }) => {
-  return (
-    <div className={`chat-message ${message.role === "assistant" && "chatgpt"}`}>
-        <div className="chat-message-center">
-          <div className="avatar">
-          {message.role === 'assistant' ? (
-            <IconRobot size={30} />
-          ) : (
-            <IconUser size={30} />
-          )}
-          </div>
-          <div className="message">
-              {message.content}
-          </div>
-      </div>
-    </div>
-)};
 
 export default App;
