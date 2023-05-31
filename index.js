@@ -18,13 +18,13 @@ app.use(bodyParser.json());
 const port = 3080;
 
 app.post('/', async (req, res) => {
-  const { chatLog } = req.body;
-
+  const { messages } = req.body;
+  console.log('Messages' + JSON.stringify(messages));
   try {
     const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
-      messages: chatLog,
-      max_tokens: 100,
+      messages: messages,
+      max_tokens: 1000,
     });
   
     res.json({
