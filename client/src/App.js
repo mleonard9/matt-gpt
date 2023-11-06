@@ -1,16 +1,24 @@
 import './App.css';
 import './normal.css';
-import { useState } from 'react';
+import { useState, useEffect  } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Chat from './components/Chat/Chat';
+import UserInput from './components/Chat/UserInput';
+import SideMenu from './components/SideMenu';
 
 function App() {
-  const [input, setInput] = useState("");
   const [chats, setChats] = useState([]);
   const [activeChatId, setActiveChatId] = useState(null);
 
+  useEffect(() => {
+    if(chats.length === 0) {
+      addChat();
+    }
+  }, []);
+
   function addChat() {
     const newChat = {
+      title: "New Chat",
       id: uuidv4(), 
       messages: []
     };
@@ -18,19 +26,45 @@ function App() {
     setActiveChatId(newChat.id);
   }
 
-  async function handleSubmit(e){
-    e.preventDefault();
+  const deleteChat = (id) => {
+    if(chats.length === 1) {
+      setActiveChatId(null);
+      setChats([]);
+      return;
+    } else {
+      const updatedChats = chats.filter(chat => chat.id !== id);
 
-    const activeChat = chats.find(chat => chat.id === activeChatId);
-    const newUserMessage = { role: "user", content: input };
+      if (activeChatId === id) {
+        setActiveChatId(updatedChats[0].id);
+      }
+
+      setChats(updatedChats);
+    }
+  };
+
+  const changeTitle = (id, title) => {
+    const updatedChats = chats.map(chat => chat.id === id ? {...chat, title: title} : chat);
+    setChats(updatedChats);
+  };
+
+  const getActiveChat = () => {
+    return chats.find(chat => chat.id === activeChatId);
+  };
+
+  async function handleSubmit(message) {
+    if (message.length === 0) return;
+
+    const activeChat = getActiveChat();
+
+    const newUserMessage = { role: "user", content: message };
+    // Adds user message to active chat
     const updatedUserChat = { ...activeChat, messages: [...activeChat.messages, newUserMessage] };
+    // Updates all chats with updated active chat
     const updatedUserChats = chats.map(chat => chat.id === activeChatId ? updatedUserChat : chat);
-
     setChats(updatedUserChats);
-    setInput("");
 
-    try {
-      const response = await fetch('http://localhost:3080/', {
+    try { 
+    const response = await fetch('http://localhost:3080/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,60 +76,32 @@ function App() {
 
     const data = await response.json();
 
-    const newUserMessage = { role: "assistant", content: data.message.content };
-    const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, newUserMessage] };
+    const newAssistantMessage = { role: "assistant", content: data.message.content };
+    // Adds assistant message to active chat
+    const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, newAssistantMessage] };
+    // Updates all chats with updated active chat
     const updatedAssistantChats = chats.map(chat => chat.id === activeChatId ? updatedAssistantChat : chat);
     setChats(updatedAssistantChats);
 
     } catch (e) {
       console.log(e);
     }
-  } 
-
-  const deleteChat = (id) => {
-    const updatedChats = chats.filter(chat => chat.id !== id);
-    setChats(updatedChats);
-
-    if (activeChatId === id) {
-      setActiveChatId(null);
-    }
   };
 
-  function handleChatSelect(id) {
+  function selectChat(id) {
     setActiveChatId(id);
   };
 
   return (
     <div className="App">
       <aside className="sidemenu">
-        <div className="side-menu-button" onClick={addChat}>
-          <span>+</span>
-          New Chat
-        </div>
-        {
-          chats.map(chat => (
-            <div className="side-menu-chat" key={chat.id} onClick={() => {handleChatSelect(chat.id)} }>
-              <span>Chat</span>
-            </div>
-          ))
-        }
+        <SideMenu chats={chats} activeChatId={activeChatId} onSelect={selectChat} onDelete={deleteChat} onAddChat={addChat} onTitleChange={changeTitle} />
       </aside>
       <section className="chatbox">
-        {
-          activeChatId && (
-            <Chat chat={chats.find(chat => chat.id === activeChatId)} />
-          )
-        }
+        <Chat chat={chats.find(chat => chat.id === activeChatId)} />
       </section>
       <section className="chat-input-holder">
-          <form onSubmit={handleSubmit}>
-            <input 
-              rows="1"
-              onChange={(e) => setInput(e.target.value)}
-              value={input}
-              className="chat-input-textarea"
-              ></input>
-          </form>
+        <UserInput onSubmit={handleSubmit}/>
       </section>
     </div>
   );

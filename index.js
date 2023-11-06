@@ -6,9 +6,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const configuration = new Configuration({ 
-  organization: process.env.OPENAI_ORG,
   apiKey: process.env.OPENAI_KEY,
 });
+
 const openai = new OpenAIApi(configuration);
 
 const app = express();
@@ -19,12 +19,17 @@ const port = 3080;
 
 app.post('/', async (req, res) => {
   const { messages } = req.body;
-  console.log('Messages' + JSON.stringify(messages));
+
+  const messagesWithPrompt = [{ 
+    role: 'user', content: 'You are MattGPT, a large language model trained by OpenAI. Follow the user`s instructions carefully. Respond using markdown.' }, 
+    ...messages,
+  ];
+  
   try {
     const response = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages: messages,
-      max_tokens: 1000,
+      model: "gpt-3.5-turbo",
+      messages: messagesWithPrompt,
+      max_tokens: 512,
     });
   
     res.json({
@@ -36,5 +41,5 @@ app.post('/', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`MattGPT listening at http://localhost:${port}`)
 });

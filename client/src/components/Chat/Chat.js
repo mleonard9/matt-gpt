@@ -5,7 +5,7 @@ import ChatMessage from './ChatMessage';
 function Chat({ chat }) {
   return (
     <div className="chat-log">
-      {chat.messages.map((message, index) => (
+      {chat && chat.messages.map((message, index) => (
         <ChatMessage key={index} message={message} />
       ))}
     </div>
