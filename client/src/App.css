@@ -96,15 +96,18 @@
 
 .chat-log {
   text-align: left;
+  padding-bottom: 5rem;
 }
 
 .chat-message {
   display: flex;
   flex-direction: row;
+  padding: .5rem;
 }
 
 .chat-message.chatgpt {
   background-color: #444654;
+  padding: .5rem;
 }
 
 .chat-message-center {

@@ -57,20 +57,25 @@ function App() {
 
   async function handleSubmit(message) {
     if (message.length === 0) return;
+
     const activeChat = getActiveChat();
 
     const updatedUserChat = { ...activeChat, messages: [...activeChat.messages, { role: "user", content: message }] };
     const updatedUserChats = chats.map(chat => chat.id === activeChatId ? updatedUserChat : chat);
     setChats(updatedUserChats);
 
-    //const data = await callOpenAiChatApi(updatedUserChat.messages);
-    const data = await callOpenAiImageApi('a painting of a cat sitting on a couch');
-    
-    const markdownImage = `![](${data.image_url})`;
-
-    const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, { role: "assistant", content: markdownImage }] };
-    const updatedAssistantChats = chats.map(chat => chat.id === activeChatId ? updatedAssistantChat : chat);
-    setChats(updatedAssistantChats);
+    if(message.startsWith('!image')) {
+      const imageData = await callOpenAiImageApi(message.split('!image')[1]);
+      const markdownImage = `![](${imageData.image_url})`;
+      const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, { role: "assistant", content: markdownImage }] };  
+      const updatedAssistantChats = chats.map(chat => chat.id === activeChatId ? updatedAssistantChat : chat);
+      setChats(updatedAssistantChats);
+    } else {
+      const data = await callOpenAiChatApi(updatedUserChat.messages);
+      const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, { role: "assistant", content: data.message.content }] };
+      const updatedAssistantChats = chats.map(chat => chat.id === activeChatId ? updatedAssistantChat : chat);
+      setChats(updatedAssistantChats);
+    }
   };
 
   function selectChat(id) {
