@@ -44,7 +44,17 @@ function ChatMessage({ message }) {
                           {children}
                         </code>
                         )
-                      }
+                      },
+                      img({node, inline, className, children, ...props}) {
+                        return (
+                          <img
+                            {...props}
+                            style={{maxWidth: '256px'}}
+                            className={className}
+                            alt='Generated from Prompt'
+                          />
+                        )
+                      },
                     }}
                   />
                 </div>

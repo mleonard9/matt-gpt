@@ -5,15 +5,19 @@ import { v4 as uuidv4 } from 'uuid';
 import Chat from './components/Chat/Chat';
 import UserInput from './components/Chat/UserInput';
 import SideMenu from './components/SideMenu';
+import { getJarvisQuote } from './utils/Utils';
+import { callOpenAiChatApi, callOpenAiImageApi } from './api/OpenAI';
 
 function App() {
   const [chats, setChats] = useState([]);
   const [activeChatId, setActiveChatId] = useState(null);
+  const [jarvisQuote, setJarvisQuote] = useState('');
 
   useEffect(() => {
     if(chats.length === 0) {
       addChat();
     }
+    setJarvisQuote(getJarvisQuote());
   }, []);
 
   function addChat() {
@@ -53,39 +57,20 @@ function App() {
 
   async function handleSubmit(message) {
     if (message.length === 0) return;
-
     const activeChat = getActiveChat();
 
-    const newUserMessage = { role: "user", content: message };
-    // Adds user message to active chat
-    const updatedUserChat = { ...activeChat, messages: [...activeChat.messages, newUserMessage] };
-    // Updates all chats with updated active chat
+    const updatedUserChat = { ...activeChat, messages: [...activeChat.messages, { role: "user", content: message }] };
     const updatedUserChats = chats.map(chat => chat.id === activeChatId ? updatedUserChat : chat);
     setChats(updatedUserChats);
 
-    try { 
-    const response = await fetch('http://localhost:3080/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messages: updatedUserChat.messages,
-      }),
-    });
+    //const data = await callOpenAiChatApi(updatedUserChat.messages);
+    const data = await callOpenAiImageApi('a painting of a cat sitting on a couch');
+    
+    const markdownImage = `![](${data.image_url})`;
 
-    const data = await response.json();
-
-    const newAssistantMessage = { role: "assistant", content: data.message.content };
-    // Adds assistant message to active chat
-    const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, newAssistantMessage] };
-    // Updates all chats with updated active chat
+    const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, { role: "assistant", content: markdownImage }] };
     const updatedAssistantChats = chats.map(chat => chat.id === activeChatId ? updatedAssistantChat : chat);
     setChats(updatedAssistantChats);
-
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   function selectChat(id) {
@@ -101,7 +86,7 @@ function App() {
         <Chat chat={chats.find(chat => chat.id === activeChatId)} />
       </section>
       <section className="chat-input-holder">
-        <UserInput onSubmit={handleSubmit}/>
+        <UserInput onSubmit={handleSubmit} jarvisQuote={jarvisQuote}/>
       </section>
     </div>
   );

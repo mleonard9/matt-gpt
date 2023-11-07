@@ -40,6 +40,25 @@ app.post('/', async (req, res) => {
   }
 });
 
+app.post('/images', async (req, res) => {
+  const { imagePrompt } = req.body;
+
+  try {
+    const response = await openai.createImage({
+      model: "dall-e-3",
+      prompt: imagePrompt,
+      n: 1,
+      size: "1024x1024",
+    });
+  
+    res.json({
+      image_url: response.data.data[0].url,
+    })
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 app.listen(port, () => {
   console.log(`MattGPT listening at http://localhost:${port}`)
 });

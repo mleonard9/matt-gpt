@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { getJarvisQuote } from '../../utils/Utils';
 
-function UserInput({ onSubmit }) {
+function UserInput({ onSubmit, jarvisQuote }) {
   const [message, setMessage] = useState('');
 
   const handleChange = (event) => {
@@ -29,7 +28,7 @@ function UserInput({ onSubmit }) {
         value={message}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder={getJarvisQuote()}
+        placeholder={jarvisQuote}
         className="chat-input-textarea"
       />
     </div>

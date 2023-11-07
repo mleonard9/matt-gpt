@@ -15,7 +15,7 @@ function SideMenu ({chats, activeChatId, onSelect, onDelete, onAddChat, onTitleC
         <div className="divider" /> 
       {
         chats.map(chat => (
-          <ChatTile chat={chat} activeChatId={activeChatId} onSelect={onSelect} onDelete={onDelete} onTitleChange={onTitleChange}/>
+          <ChatTile chat={chat} activeChatId={activeChatId} onSelect={onSelect} onDelete={onDelete} onTitleChange={onTitleChange} key={chat.id}/>
         ))
       }
     </div>
