@@ -64,18 +64,19 @@ function App() {
     const updatedUserChats = chats.map(chat => chat.id === activeChatId ? updatedUserChat : chat);
     setChats(updatedUserChats);
 
+    let assistantMessage = {};
     if(message.startsWith('!image')) {
       const imageData = await callOpenAiImageApi(message.split('!image')[1]);
       const markdownImage = `![](${imageData.image_url})`;
-      const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, { role: "assistant", content: markdownImage }] };  
-      const updatedAssistantChats = chats.map(chat => chat.id === activeChatId ? updatedAssistantChat : chat);
-      setChats(updatedAssistantChats);
+      assistantMessage = { role: "assistant", content: markdownImage };
     } else {
       const data = await callOpenAiChatApi(updatedUserChat.messages);
-      const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, { role: "assistant", content: data.message.content }] };
-      const updatedAssistantChats = chats.map(chat => chat.id === activeChatId ? updatedAssistantChat : chat);
-      setChats(updatedAssistantChats);
+      assistantMessage = { role: "assistant", content: data.message.content };
     }
+
+    const updatedAssistantChat = { ...updatedUserChat, messages: [...updatedUserChat.messages, assistantMessage] };  
+    const updatedAssistantChats = chats.map(chat => chat.id === activeChatId ? updatedAssistantChat : chat);
+    setChats(updatedAssistantChats);
   };
 
   function selectChat(id) {
