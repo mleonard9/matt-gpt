@@ -22,16 +22,14 @@ function UserInput({ onSubmit, jarvisQuote }) {
   };
 
   return (
-    <div className="chat-input-container">
-      <input
-        type="text"
-        value={message}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        placeholder={jarvisQuote}
-        className="chat-input-textarea"
-      />
-    </div>
+    <input
+      type="text"
+      value={message}
+      onChange={handleChange}
+      onKeyDown={handleKeyDown}
+      placeholder={jarvisQuote}
+      className="chat-input-textarea"
+    />
   );
 }
 

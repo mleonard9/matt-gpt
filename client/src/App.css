@@ -1,8 +1,8 @@
 .App {
+  display: flex;
   background-color: #343541;
   color: #E0E0E0;
   text-align: center;
-  display: flex;
   position: absolute;
   top: 0;
   left: 0;
@@ -13,10 +13,58 @@
   font-size: 12px;
 }
 
-.sidemenu {
+.left-panel {
   width: 200px;
   padding: 10px;
   background-color: #202123;
+}
+
+.right-panel {
+  width: 200px;
+  background-color: #202123;
+  float: right;
+  overflow-x: hidden;
+  transition: 0.1s;
+}
+
+.right-panel.collapsed {
+  width: 36px;
+  height: 40px;
+  background-color: #202123;
+}
+
+.right-panel-header {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  padding: 12px 8px;
+}
+
+.right-panel-icon {
+  cursor: pointer;
+}
+
+.right-panel-header-text {
+  padding-top: 3px;
+  padding-left: 2px;
+}
+
+.right-panel-header-button {
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.right-panel-header-button:hover {
+  background-color:rgba(255,255,255,0.1);
+  cursor: pointer;
+}
+
+.right-panel-body {
+  margin: 0 10px;
+  border-top: 1px solid rgba(255,255,255,0.5);
 }
 
 .side-menu-button {
@@ -67,20 +115,29 @@
   cursor: pointer;
 }
 
-.chatbox {
+.chat-box {
   flex:1;
   background-color: #343541;
   position: relative;
-  overflow: scroll;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; 
+}
+
+.chat-log {
+  height: 100%;
+  text-align: left;
+  overflow-y: scroll;
 }
 
 .chat-input-holder {
   background-color: #343541;
   padding: 24px;
-  margin-left: 200px;
-  position: absolute;
+  align-self: flex-end; /* Align the user input to the bottom of the container */
+  position: sticky;
   bottom: 0;
-  left: 0;right: 0;
+  width: 100%;
 }
 
 .chat-input-textarea {
@@ -92,11 +149,6 @@
   border: none;
   outline: none;
   box-shadow: 0 0 8px 0 rgba(0,0,0,.25);
-}
-
-.chat-log {
-  text-align: left;
-  padding-bottom: 5rem;
 }
 
 .chat-message {
@@ -159,6 +211,7 @@
 
 .edit-button {
   cursor: pointer;
+  padding-right: 4px;
 }
 
 .transparent-input {
@@ -173,6 +226,128 @@
   overflow: hidden;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width:100%;
+  height: 100%;
+}
+
+.modal-main {
+  position:fixed;
+  background-color: #444654;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: auto;
+  width: 400px;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  border-radius: 10px;
+}
+
+.modal-form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+}
+
+.modal-input {
+  background: transparent;
+  outline: none;
+  border: none;
+  width: 100%;
+  line-height: 12px;
+  padding: 4px;
+  color: #E0E0E0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.modal-input-container {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 2px;
+  margin: 4px;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.textarea {
+  min-height: 6rem;
+}
+
+.modal-buttons {
+  padding-top: 16px;
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.modal-button {
+  background: transparent;
+  color: #E0E0E0;
+  padding: 4px;
+  margin: 0 4px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.display-block {
+  display: block;
+}
+
+.display-none {
+  display: none;
+}
+
+.profile-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  text-align: left;
+  transition: ease 0.25s all;
+  margin: 8px 0;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.profile-item-active {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  text-align: left;
+  transition: ease 0.25s all;
+  margin: 8px 0;
+  background-color:rgba(255,255,255,0.1);
+  padding: 8px;
+  cursor: pointer;
+}
+
+.model-select {
+  background: transparent;
+  outline: none;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  padding: 4px;
+  margin: 4px;
+  color: #E0E0E0;
+}
+
+.model-select-option {
+  background-color: #202123;
 }
 
 *{

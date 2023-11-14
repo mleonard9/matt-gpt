@@ -3,8 +3,8 @@ import './normal.css';
 import { useState, useEffect  } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Chat from './components/Chat/Chat';
-import UserInput from './components/Chat/UserInput';
-import SideMenu from './components/SideMenu';
+import LeftPanel from './components/Panels/LeftPanel';
+import RightPanel from './components/Panels/RightPanel';
 import { getJarvisQuote } from './utils/Utils';
 import { callOpenAiChatApi, callOpenAiImageApi } from './api/OpenAI';
 
@@ -23,6 +23,8 @@ function App() {
   function addChat() {
     const newChat = {
       title: "New Chat",
+      model: "gpt-3.5-turbo",
+      prompt: "You are MattGPT, a large language model trained by OpenAI. Follow the user`s instructions carefully. Respond using markdown.",
       id: uuidv4(), 
       messages: []
     };
@@ -31,19 +33,13 @@ function App() {
   }
 
   const deleteChat = (id) => {
-    if(chats.length === 1) {
-      setActiveChatId(null);
-      setChats([]);
-      return;
-    } else {
-      const updatedChats = chats.filter(chat => chat.id !== id);
+    const updatedChats = chats.filter(chat => chat.id !== id);
 
-      if (activeChatId === id) {
-        setActiveChatId(updatedChats[0].id);
-      }
-
-      setChats(updatedChats);
+    if (activeChatId === id && updatedChats.length > 0) {
+      setActiveChatId(updatedChats[0].id);
     }
+
+    setChats(updatedChats);
   };
 
   const changeTitle = (id, title) => {
@@ -70,7 +66,7 @@ function App() {
       const markdownImage = `![](${imageData.image_url})`;
       assistantMessage = { role: "assistant", content: markdownImage };
     } else {
-      const data = await callOpenAiChatApi(updatedUserChat.messages);
+      const data = await callOpenAiChatApi(updatedUserChat.messages, updatedUserChat.model, updatedUserChat.prompt);
       assistantMessage = { role: "assistant", content: data.message.content };
     }
 
@@ -79,21 +75,28 @@ function App() {
     setChats(updatedAssistantChats);
   };
 
-  function selectChat(id) {
+
+  const selectChat = (id) => {
     setActiveChatId(id);
+  };
+
+  const handleAddChatWithProfile = (profile) => {
+    const newChat = {
+      title: profile.title,
+      model: profile.model,
+      prompt: profile.prompt,
+      id: uuidv4(), 
+      messages: []
+    };
+    setChats([...chats, newChat]);
+    setActiveChatId(newChat.id);
   };
 
   return (
     <div className="App">
-      <aside className="sidemenu">
-        <SideMenu chats={chats} activeChatId={activeChatId} onSelect={selectChat} onDelete={deleteChat} onAddChat={addChat} onTitleChange={changeTitle} />
-      </aside>
-      <section className="chatbox">
-        <Chat chat={chats.find(chat => chat.id === activeChatId)} />
-      </section>
-      <section className="chat-input-holder">
-        <UserInput onSubmit={handleSubmit} jarvisQuote={jarvisQuote}/>
-      </section>
+      <LeftPanel chats={chats} activeChatId={activeChatId} onSelect={selectChat} onDelete={deleteChat} onAddChat={addChat} onTitleChange={changeTitle} />
+      <Chat chat={chats.find(chat => chat.id === activeChatId)} onSubmit={handleSubmit} jarvisQuote={jarvisQuote} />
+      <RightPanel onAddChatWithProfile={handleAddChatWithProfile}/>
     </div>
   );
 }
