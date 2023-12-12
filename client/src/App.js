@@ -17,9 +17,10 @@ function App() {
     if(chats.length === 0) {
       addChat();
     }
+
     setJarvisQuote(getJarvisQuote());
   }, []);
-
+  
   function addChat() {
     const newChat = {
       title: "New Chat",
@@ -95,7 +96,7 @@ function App() {
   return (
     <div className="App">
       <LeftPanel chats={chats} activeChatId={activeChatId} onSelect={selectChat} onDelete={deleteChat} onAddChat={addChat} onTitleChange={changeTitle} />
-      <Chat chat={chats.find(chat => chat.id === activeChatId)} onSubmit={handleSubmit} jarvisQuote={jarvisQuote} />
+      <Chat chat={chats.find((chat) => chat.id === activeChatId)} onSubmit={handleSubmit} jarvisQuote={jarvisQuote} />
       <RightPanel onAddChatWithProfile={handleAddChatWithProfile}/>
     </div>
   );

@@ -4,10 +4,11 @@ import ProfileModal from '../Modals/ProfileModal';
 import ProfileTile from '../Profiles/ProfileTile';
 import { v4 as uuidv4 } from 'uuid';
 import { callOpenAiModelsApi } from '../../api/OpenAI';
+import { mockProfiles } from '../../mock/mock';
 
 function RightPanel ({ onAddChatWithProfile }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [profiles, setProfiles] = useState([]);
+  const [profiles, setProfiles] = useState(mockProfiles);
   const [editingProfile, setEditingProfile] = useState(null);
   const [activeProfileId, setActiveProfileId] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -103,11 +104,13 @@ function RightPanel ({ onAddChatWithProfile }) {
         }
         { !isCollapsed ? <div className="right-panel-header-button" onClick={openCreateProfileModal}>Create Profile</div> : ''}
       </div>
+      { !isCollapsed ? 
       <div className="right-panel-body">
         {profiles.map((profile, index) => (
           <ProfileTile key={index} profile={profile} activeProfileId={activeProfileId} onAddChatWithProfile={handleAddChatWithProfile} onSelect={handleSelect} onEdit={handleEdit} />
         ))}
       </div>
+      : ''}
       <ProfileModal show={showModal} initialProfile={editingProfile} models={models} onClose={handleModalClose} onSubmit={handleModalSubmit} onDelete={handleDelete} />
     </div>
   )

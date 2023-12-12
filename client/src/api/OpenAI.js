@@ -1,6 +1,9 @@
+const local_url = 'http://localhost:3080';
+const render_url = 'https://matt-gpt-express.onrender.com'
+
 export async function callOpenAiChatApi(messages, model, prompt) {
   try {
-    const response = await fetch('http://localhost:3000/', {
+    const response = await fetch(`${local_url}/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +29,7 @@ export async function callOpenAiChatApi(messages, model, prompt) {
 
 export async function callOpenAiImageApi(prompt) {
   try {
-    const response = await fetch('http://localhost:3000/images', {
+    const response = await fetch(`${local_url}/images`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +53,7 @@ export async function callOpenAiImageApi(prompt) {
 
 export async function callOpenAiModelsApi() {
   try {
-    const response = await fetch('http://localhost:3000/models', {
+    const response = await fetch(`${local_url}/models`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
